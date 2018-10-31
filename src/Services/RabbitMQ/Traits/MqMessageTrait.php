@@ -39,6 +39,7 @@ trait MqMessageTrait
      */
     public function createAMQPMessage($message, array $properties = [])
     {
+        $message = $this->ensureString($message);
         return new AMQPMessage($message, $this->getMessageProperties($message, $properties));
     }
     
@@ -65,5 +66,17 @@ trait MqMessageTrait
     public function isJson($string)
     {
         return ! is_null(json_decode($string));
+    }
+    
+    /**
+     * @param $string
+     * @return string
+     */
+    public function ensureString($string)
+    {
+        if (is_array($string)) {
+            $string = json_encode($string);
+        }
+        return (string) $string;
     }
 }

@@ -29,7 +29,7 @@ class ServiceProvider extends LaravelServiceProvider
     
         $this->app->singleton(
             MqHandler::class,
-            function () use ($config) {
+            function () {
                 return (new MqHandler())->setConfigMap(config('aixue-mq'));
             }
         );
@@ -45,7 +45,7 @@ class ServiceProvider extends LaravelServiceProvider
             function ($app) {
                 return new Tools(
                     $app->make(MqHandler::class),
-                    $app->make(LarkHandler::class)
+                    $app->make(GuzzleHandler::class)
                 );
             }
         );
