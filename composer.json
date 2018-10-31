@@ -1,0 +1,29 @@
+{
+    "name": "aixue/laravel-tools",
+    "description": "laravel tools",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "shawn",
+            "email": "shawn0828@hotmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.6.4",
+        "php-amqplib/php-amqplib": "^2.7",
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aixue\\Tools\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Aixue\\Tools\\ServiceProvider"
+            ]
+        }
+    }
+}
