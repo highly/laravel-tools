@@ -65,7 +65,7 @@ class MqHandler extends StructHandler
      * @param array  $properties
      * @return bool
      */
-    public function basicPatch($message, array $properties = [])
+    public function basicPublish($message, array $properties = [])
     {
         if (! $this->initMqConnection()) {
             Log::warning(
