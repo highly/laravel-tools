@@ -53,7 +53,12 @@ class MqHandler extends StructHandler
             }
         } catch (\Exception $e) {
             Log::warning(
-                'mq_basicConsume_info', ['consumer_ta' => $consumer_tag, 'info' => $this->getCfgInfoForLog()]
+                'mq_basicConsume_info',
+                [
+                    'msg'          => $e->getMessage(),
+                    'consumer_tag' => $consumer_tag,
+                    'info'         => $this->getCfgInfoForLog(),
+                ]
             );
             return false;
         }

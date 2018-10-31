@@ -1,9 +1,9 @@
-# aixue/laravel-notification
+# aixue/laravel-tools
 
 ## Installation
 
 ```composer
-composer require aixue/laravel-notification
+composer require aixue/laravel-tools
 ```
 
 ## Generate Config
@@ -11,13 +11,13 @@ composer require aixue/laravel-notification
 > for laravel version >= 5.5
 
 ```php
-php artisan vendor:publish --tag=notification-config
+php artisan vendor:publish --tag=mq-config
 ```
 
 > for laravel version < 5.5
 
 ```php
-cp <PROJECT_PATH>/vendor/aixue/laravel-notification/config/aixue-notification.php <PROJECT_PATH>/config/
+cp <PROJECT_PATH>/vendor/aixue/laravel-tools/src/Services/RabbitMQ/Config/aixue-mq.php <PROJECT_PATH>/config/
 ```
 
 Add following items to `<PROJECT_PATH>/config/app.php`
@@ -25,198 +25,110 @@ Add following items to `<PROJECT_PATH>/config/app.php`
 ```php
 'providers' => [
     ...,
-    Aixue\Notification\ServiceProvider::class,
+    Aixue\Tools\ServiceProvider::class,
 ]
 
 'aliases' => [
     ...,
-    'Notification' => Aixue\Notification\Facades\NotificationFacade::class,
+    'Tools' => Aixue\Tools\Facades\ToolsFacade::class,
 ]
-```
-
-## Config Example
-
-```php
-    /*
-    |--------------------------------------------------------------------------
-    | DingTalk Config List
-    |--------------------------------------------------------------------------
-    |
-    */
-    'dingTalk' => [
-        'hook_list' => [
-            '<hook_name_1>' => [
-                'webhook' => env('ENV_NAME_1'),
-            ],
-            '<hook_name_2>' => [
-                'webhook' => env('ENV_NAME_2'),
-            ],
-        ],
-    ],
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Lark Config List
-    |--------------------------------------------------------------------------
-    |
-    | bot_token  => ['用于获取用户信息等API请求', '申请聊天机器人可获得']
-    |
-    */
-    'lark' => [
-        'bot_token' => env('LARK_API_BOT_TOEKN'),
-        'hook_list' => [
-            '<hook_name_1>' => [
-                'webhook' => env('ENV_NAME_1'),
-            ],
-            '<hook_name_2>' => [
-                'webhook' => env('ENV_NAME_2'),
-            ],
-        ],
-    ],
-    
-    /*
-    |--------------------------------------------------------------------------
-    | SMS Config
-    |--------------------------------------------------------------------------
-    |
-    | code   => 验证码类短信通道
-    | notice => 通知类短信通道
-    */
-    'sms' => [
-        'host'    => env('SMS_HOST'),
-        'channel' => [
-            'code' => [
-                'app_id'  => env('SMS_CODE_APP_ID'),
-                'app_key' => env('SMS_CODE_APP_KEY'),
-            ],
-            'notice' => [
-                'app_id'  => env('SMS_NOTICE_APP_ID'),
-                'app_key' => env('SMS_NOTICE_APP_KEY'),
-            ],
-        ],
-    ],
 ```
 
 ## Code Example
 
-### Lark
+### RabbitMQ
 
-> TextMessage
-
-```php
-$message = (new TextMessage('title', "content_line_1 \n content_line_2"))
-               ->atEmails('shawn@highly.com');
-// or using array instead
-$message = (new TextMessage('title', ['content_line_1', 'content_line_2']))
-               ->atEmails(['shawn@highly.com', 'shawn2@highly.com']);
-           
-\Notification::lark('hook_name')->send($message);
-```
-
-### Sms
-
-> 验证码类型
+> config map
 
 ```php
-// 固定模板, 已经申报, 推荐使用, 送达率稳定
-$message = (new CodeMessage('1234'))->phoneList(['138xxxxxxxx', '139xxxxxxxx']);
-\Notification::Sms()->send($message);
+<?php
+return [
+    /**
+     * |--------------------------------------------------------------------------
+     * | RabbitMQ Config List
+     * |--------------------------------------------------------------------------
+     * |
+     */
+    'connections' => [
+        
+        'default' => [
+            'host'     => env('RABBITMQ_HOST'),
+            'port'     => env('RABBITMQ_PORT', '5672'),
+            'user'     => env('RABBITMQ_USER'),
+            'password' => env('RABBITMQ_PWD'),
+        ],
 
-// 自定义验证码内容
-$message = (new CodeMessage('自定义验证码内容:, 1234, 请勿泄露.', false))
-               ->phoneList('138xxxxxxxx,139xxxxxxxx');
-\Notification::Sms()->send($message);
-```
+        '<connection_name_2>' => [
+            'host'     => env('RABBITMQ_HOST_2'),
+            'port'     => env('RABBITMQ_PORT_2', '5672'),
+            'user'     => env('RABBITMQ_USER_2'),
+            'password' => env('RABBITMQ_PWD_2'),
+        ],
+    ],
 
-> 通知类型
+    'exchange' => [
+        
+        '<exchange_group_name_1>' => [
+            'exchange_name' => env('RABBITMQ_EXCHANGE'),
+            'queue_name'    => env('RABBITMQ_QUEUE'),
+            'routing_key'   => env('RABBITMQ_ROUTING_KEY'),
+            'consumer_tag'  => env('RABBITMQ_CONSUMER_TAG'),
+        ],
 
-```php
-$content = '尊敬的使用者, 您使用的是通知类型短信.';
-$message = (new NoticeMessage($content))->phoneList(['138xxxxxxxx', '139xxxxxxxx']);
-\Notification::Sms()->send($message);
-```
-
-### DingTalk
-
-> TextMessage
-
-```php
-$msg = "# Title Info \n\n content_line_1 \n content_line_2";
-// or using array instead
-$msg = [
-    '# Title Info',
-    '',
-    'content_line_1',
-    'content_line_2',
+        '<exchange_group_name_2>' => [
+            'exchange_name' => env('RABBITMQ_EXCHANGE_2'),
+            'queue_name'    => env('RABBITMQ_QUEUE_2'),
+            'routing_key'   => env('RABBITMQ_ROUTING_KEY_2'),
+            'consumer_tag'  => env('RABBITMQ_CONSUMER_TAG_2'),
+        ],
+        
+    ],
 ];
-$message = (new TextMessage($msg))->atMobiles(['138xxxxxxxx']);
-                                //->atAll(true);
-\Notification::dingTalk("hook_name")->send($message);
 ```
 
-> MarkdownMessage
+> basic_publish `single`
 
 ```php
-$msg = "## Title Info \n\n"
-     . "> content_line_1 \n\n > content_line_2 \n\n"
-     . "##### ending_line";
-// or using array instead
-$msg = [
-    '## Title Info',
-    '',
-    '> content_line_1',
-    '',
-    '> content_line_2',
-    '', '',
-    '##### ending_line',
-];
-$message = (new MarkdownMessage("Title Info", $msg));
-\Notification::dingTalk("hook_name")->send($message);
+// default connection name is 'default'
+try{
+    \Tools::rabbitMQ('exchange_group_name_1')->basicPublish('MQ Message');
+} catch (\Exception $e) {}
+
+// define another connection name
+try{
+    \Tools::rabbitMQ('exchange_group_name_1, 'group_name_2')->basicPublish('MQ Message');
+} catch (\Exception $e) {}
 ```
 
-> LinkMessage
+> publish_batch `multiple`
 
 ```php
-$message = new LinkMessage(
-    "Title_line_1 \nTitle_line_2",
-    "content_line_1 \ncontent_line_2 \ncontent_line_3",
-    'http://picture_url',
-    'http://website_url'
-);
-// or using array instead
-$message = new LinkMessage(
-    ['Title_line_1', 'Title_line_2'],
-    ['content_line_1', 'content_line_2', 'content_line_3'],
-    'http://picture_url',
-    'http://website_url'
-);
-\Notification::dingTalk("hook_name")->send($message);
+try{
+    \Tools::rabbitMQ('exchange_group_name_1')->batchPublish(['MQ Message 1', 'MQ Message 2']);
+} catch (\Exception $e) {}
 ```
 
-> WholeActionCardMessage
+> basic_consume `block`
 
 ```php
-$message = new WholeActionCardMessage('pop title', 'text', 'text title', 'http://website_url');
-\Notification::dingTalk("hook_name")->send($message);
+try{
+    $mqHandler = \Tools::rabbitMQ('exchange_group_name_1');
+    $mqHandler->basicConsume(function(\PhpAmqpLib\Message\AMQPMessage $message) use ($mqHandler) {
+        echo "\n--------\n";
+        echo $message->body;
+        echo "\n--------\n";
+        
+        // ack back
+        // same as: $message->delivery_info['channel']->basic_cancel($message->delivery_info['consumer_tag']);
+        $mqHandler->ack($message);
+    });
+} catch (\Exception $e) {}
 ```
 
-> IndependenceActionCardMessage
+### Guzzle
+
+> 
 
 ```php
-$btn = [
-    new Btn('article_1', 'http://website_url_1'),
-    new Btn('article_2', 'http://website_url_2'),
-];
-$message = new IndependenceActionCardMessage('pop title', 'title', $btn);
-\Notification::dingTalk("hook_name")->send($message);
-```
 
-> FeedCardMessage
-
-```php
-$links = [
-    new Link('title_1', 'http://messageURL', 'http://picURL'),
-    new Link('title_2', 'http://messageURL', 'http://picURL'),
-];
-\Notification::dingTalk("hook_name")->send(new FeedCardMessage($links));
 ```
