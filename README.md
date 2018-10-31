@@ -104,7 +104,9 @@ try{
 
 ```php
 try{
-    \Tools::rabbitMQ('exchange_group_name_1')->batchPublish(['MQ Message 1', 'MQ Message 2']);
+    \Tools::rabbitMQ('exchange_group_name_1')->batchPublish(
+        ['MQ Message 1', 'MQ Message 2']
+    );
 } catch (\Exception $e) {}
 ```
 
