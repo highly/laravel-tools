@@ -7,6 +7,7 @@ use Aixue\Tools\Services\RabbitMQ\Traits\MqStructTrait;
 use Aixue\Tools\Services\RabbitMQ\Traits\MqMessageTrait;
 use Aixue\Tools\Services\RabbitMQ\Traits\ConfigInfoTrait;
 use Aixue\Tools\Services\StructHandler;
+use Aixue\Tools\Exceptions\RabbitMqException;
 
 /**
  * Class MqHandler For RabbitMQ
@@ -29,16 +30,13 @@ class MqHandler extends StructHandler
      * @param callable $callback
      * @param null     $consumer_tag
      * @return bool
+     * @throws RabbitMqException
      */
     public function basicConsume(callable $callback, $consumer_tag = null)
     {
-        if (! $this->initMqConnection()) {
-            Log::warning('mq_basicConsume_connection_error', ['info' => $this->getCfgInfoForLog()]);
-            return false;
-        }
+        $channelHandler = $this->initMqConnection()->noLimit()->getChannelHandler();
         
         try {
-            $channelHandler = $this->getChannelHandler();
             $channelHandler->basic_consume(
                 $this->getQueue(),
                 $this->getConsumerTag($consumer_tag),
@@ -48,46 +46,47 @@ class MqHandler extends StructHandler
                 $this->getConsumeNoWaitCfg(),
                 $callback
             );
+            
             while (count($channelHandler->callbacks)) {
                 $channelHandler->wait();
             }
+            
+            return true;
         } catch (\Exception $e) {
             Log::warning(
-                'mq_basicConsume_info',
+                'mq_basicConsume_exception',
                 [
+                    'code'         => $e->getCode(),
                     'msg'          => $e->getMessage(),
                     'consumer_tag' => $consumer_tag,
                     'info'         => $this->getCfgInfoForLog(),
                 ]
             );
-            return false;
+            throw new RabbitMqException($e->getMessage(), $e->getCode());
         }
-        return true;
     }
     
     /**
      * @param string $message
      * @param array  $properties
      * @return bool
+     * @throws RabbitMqException
      */
     public function basicPublish($message, array $properties = [])
     {
-        if (! $this->initMqConnection()) {
-            Log::warning(
-                'mq_basicPatch_connection_error',
-                ['msg' => $message, 'properties' => $properties, 'info' => $this->getCfgInfoForLog()]
-            );
-            return false;
-        }
+        $channelHandler = $this->initMqConnection()->getChannelHandler();
         
         try {
-            $this->getChannelHandler()->basic_publish(
+            $channelHandler->basic_publish(
                 $this->createAMQPMessage($message, $properties), $this->getExchange(), $this->getRoutingKey()
             );
+            
+            return true;
         } catch (\Exception $e) {
             Log::error(
                 'mq_basicPatch_publish_exception',
                 [
+                    'code'       => $e->getCode(),
                     'msg'        => $e->getMessage(),
                     'trace'      => $e->getTrace(),
                     'message'    => $message,
@@ -95,28 +94,21 @@ class MqHandler extends StructHandler
                     'info'       => $this->getCfgInfoForLog(),
                 ]
             );
-            return false;
+            throw new RabbitMqException($e->getMessage(), $e->getCode());
         }
-        return true;
     }
     
     /**
      * @param array $message_list
      * @param array $properties
      * @return bool
+     * @throws RabbitMqException
      */
     public function batchPublish(array $message_list, array $properties = [])
     {
-        if (! $this->initMqConnection()) {
-            Log::warning(
-                'mq_batchPublish_connection_error',
-                ['msg' => $message, 'properties' => $properties, 'info' => $this->getCfgInfoForLog()]
-            );
-            return false;
-        }
+        $channelHandler = $this->initMqConnection()->getChannelHandler();
         
         try {
-            $channelHandler = $this->getChannelHandler();
             foreach ($message_list as $number => $message) {
                 $channelHandler->batch_basic_publish(
                     $this->createAMQPMessage($message, $properties), $this->getExchange(), $this->getRoutingKey()
@@ -126,10 +118,13 @@ class MqHandler extends StructHandler
                 }
             }
             $channelHandler->publish_batch();
+            
+            return true;
         } catch (\Exception $e) {
             Log::error(
                 'mq_basicPatch_publish_exception',
                 [
+                    'code'       => $e->getCode(),
                     'msg'        => $e->getMessage(),
                     'trace'      => $e->getTrace(),
                     'message'    => $message_list,
@@ -137,9 +132,8 @@ class MqHandler extends StructHandler
                     'info'       => $this->getCfgInfoForLog(),
                 ]
             );
-            return false;
+            throw new RabbitMqException($e->getMessage(), $e->getCode());
         }
-        return true;
     }
     
     public function shutdown()

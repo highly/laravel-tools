@@ -5,6 +5,7 @@ namespace Aixue\Tools\Services\RabbitMQ\Traits;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AbstractConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use Aixue\Tools\Exceptions\RabbitMqException;
 
 trait MqStructTrait
 {
@@ -19,12 +20,13 @@ trait MqStructTrait
     public $channel;
     
     /**
-     * @return bool
+     * @return $this
+     * @throws RabbitMqException
      */
     protected function initMqConnection()
     {
         if ($this->connection instanceof AbstractConnection && $this->connection->isConnected()) {
-            return true;
+            return $this;
         }
         
         try {
@@ -51,18 +53,19 @@ trait MqStructTrait
             
             $this->channel->queue_bind($this->getQueue(), $this->getExchange(), $this->getRoutingKey());
             
-            return true;
+            return $this;
         } catch (\Exception $e) {
             \Log::warning(
                 'mq_connection_initialisation_exception',
                 [
+                    'code'  => $e->getCode(),
                     'msg'   => $e->getMessage(),
                     'trace' => $e->getTrace(),
                     'info'  => $this->getCfgInfoForLog(),
                 ]
             );
+            throw new RabbitMqException($e->getMessage(), $e->getCode());
         }
-        return false;
     }
     
     /**

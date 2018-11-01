@@ -10,4 +10,10 @@ use Aixue\Tools\Traits\HandlerTrait;
 class StructHandler
 {
     use HandlerTrait;
+    
+    protected function noLimit()
+    {
+        set_time_limit(0);
+        return $this;
+    }
 }

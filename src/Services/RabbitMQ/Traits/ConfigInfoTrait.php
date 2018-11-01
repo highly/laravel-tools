@@ -24,7 +24,7 @@ trait ConfigInfoTrait
     /**
      * @var string
      */
-    protected $mq_pwd;
+    protected $mq_pwd = '';
     
     /**
      * @var string
@@ -157,7 +157,7 @@ trait ConfigInfoTrait
      */
     public function setExchangeType($type)
     {
-        $this->exchange_type = $type;
+        $this->exchange_type = (string) $type;
         return $this;
     }
     
