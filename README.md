@@ -6,19 +6,9 @@
 composer require aixue/laravel-tools
 ```
 
-## Generate Config
-
-> for laravel version >= 5.5
-
-```php
-php artisan vendor:publish --tag=mq-config
-```
+## Config
 
 > for laravel version < 5.5
-
-```php
-cp <PROJECT_PATH>/vendor/aixue/laravel-tools/src/Services/RabbitMQ/Config/aixue-mq.php <PROJECT_PATH>/config/
-```
 
 Add following items to `<PROJECT_PATH>/config/app.php`
 
@@ -34,7 +24,7 @@ Add following items to `<PROJECT_PATH>/config/app.php`
 ]
 ```
 
-## Code Example
+## Service List
 
 * RabbitMQ
 * Requests
@@ -42,6 +32,20 @@ Add following items to `<PROJECT_PATH>/config/app.php`
 
 
 ### RabbitMQ
+
+#### Generate Config
+
+> for laravel version >= 5.5
+
+```php
+php artisan vendor:publish --tag=mq-config
+```
+
+> for laravel version < 5.5
+
+```php
+cp <PROJECT_PATH>/vendor/aixue/laravel-tools/src/Services/RabbitMQ/Config/aixue-mq.php <PROJECT_PATH>/config/
+```
 
 #### config map
 
