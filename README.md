@@ -36,9 +36,14 @@ Add following items to `<PROJECT_PATH>/config/app.php`
 
 ## Code Example
 
+* RabbitMQ
+* Requests
+* Aliyun Upload
+
+
 ### RabbitMQ
 
-> config map
+#### config map
 
 ```php
 <?php
@@ -86,7 +91,7 @@ return [
 ];
 ```
 
-> basic_publish `single`
+#### basic_publish `single`
 
 ```php
 // default connection name is 'default'
@@ -100,7 +105,7 @@ try{
 } catch (\Exception $e) {}
 ```
 
-> publish_batch `multiple`
+#### publish_batch `multiple`
 
 ```php
 try{
@@ -110,7 +115,7 @@ try{
 } catch (\Exception $e) {}
 ```
 
-> basic_consume `block`
+#### basic_consume `block`
 
 ```php
 try{
@@ -127,10 +132,15 @@ try{
 } catch (\Exception $e) {}
 ```
 
-### Guzzle
+### Requests
 
-> 
+#### GET
 
 ```php
 
 ```
+
+
+### Aliyun Upload
+
+
