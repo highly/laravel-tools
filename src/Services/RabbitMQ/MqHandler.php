@@ -149,9 +149,4 @@ class MqHandler extends StructHandler
             }
         } catch (\Exception $e) {}
     }
-    
-    public function __destruct()
-    {
-        $this->shutdown();
-    }
 }
