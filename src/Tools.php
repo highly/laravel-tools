@@ -47,7 +47,7 @@ class Tools
     /**
      * @return GuzzleHandler
      */
-    public function guzzle()
+    public function request()
     {
         return $this->guzzleHandler;
     }
