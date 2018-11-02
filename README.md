@@ -138,13 +138,92 @@ try{
 
 ### Requests
 
+#### Dealing Response
+
+```php
+// when failed
+if ($response->fails()) {
+    // error code > 0
+    echo 'error code: ' . $response->getCode();
+    // error message
+    echo 'error message: ' . $response->getMessage();
+}
+// when success
+if ($response->success()) {
+    // response body, rawBody() is available
+    echo 'string body: ' . $response->getBody();
+    // array body if string body can be json decoded
+    var_dump($response->getArrayBody());
+}
+```
+
 #### Method GET
+
+```php
+$response = \Tools::request()
+                  ->url('127.0.0.1/test-get?params=one')
+                  // set up timeout (unit: second)
+                  ->timeout(2)
+                  ->header(['X-Foo' => 'Bar'])
+                  ->options([
+                      // 'allow_redirects' => false,
+                      'allow_redirects' => [
+                          'max'             => 10,        // allow at most 10 redirects.
+                          'strict'          => true,      // use "strict" RFC compliant redirects.
+                          'referer'         => true,      // add a Referer header
+                          'protocols'       => ['https'], // only allow https URLs
+                          'on_redirect'     => $onRedirect,
+                          'track_redirects' => true
+                      ],
+                  ])
+                  ->get();
+```
+
+#### Method POST
+
+> Raw body requests
+
+```php
+$body = [
+    "with_author"   => true,
+    "with_brief_id" => [10, 22],
+    "item_ids"      => [1233955216, 4823217897],
+];
+
+$response = \Tools::request()
+                  ->url('10.11.24.123:3433/search/books')
+                  // set up timeout (unit: second)
+                  ->timeout(2)
+                  // create json header for request
+                  ->jsonHeader()
+                  // create other custom header
+                  ->header([
+                      'Content-Length' => 1024,
+                      'X-Foo'          => 'Bar'
+                  ])
+                  // auto convert to json, param two is for serialize
+                  ->body($body)
+                  ->post();
+```
+
+> Form Requests
+
+```php
+$body = [
+    'username' => 'shawn',
+    'password' => '123456',
+];
+$response = \Tools::request()
+                  ->url('http://www.shawn.com/login')
+                  ->formBody($body)
+                  ->post();
+```
+
+#### Method PUT
 
 ```php
 
 ```
-
-
 ### Aliyun Upload
 
 

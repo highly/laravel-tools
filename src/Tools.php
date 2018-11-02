@@ -45,11 +45,15 @@ class Tools
     }
     
     /**
+     * @param bool $init_options
      * @return GuzzleHandler
      */
-    public function request()
+    public function request($init_options = true)
     {
-        return $this->guzzleHandler->init();
+        if ($init_options) {
+            return $this->guzzleHandler->init();
+        }
+        return $this->guzzleHandler;
     }
 }
 

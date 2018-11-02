@@ -37,10 +37,14 @@ trait RequestBodyTrait
     }
     
     /**
+     * @param string $url
      * @return string
      */
-    public function getUrl()
+    public function getUrl($url = '')
     {
+        if ($url) {
+            return $this->patchUrl(trim($url));
+        }
         return $this->url;
     }
     
@@ -105,6 +109,10 @@ trait RequestBodyTrait
      */
     public function header(array $header)
     {
+        if (empty($this->options['headers'])) {
+            $this->options['headers'] = $header;
+            return $this;
+        }
         $this->options['headers'] = array_merge($this->options['headers'], $header);
         return $this;
     }
@@ -141,7 +149,7 @@ trait RequestBodyTrait
      */
     public function options(array $options)
     {
-        $this->options = $options;
+        $this->options = array_merge($this->options, $options);
         return $this;
     }
     
