@@ -201,8 +201,10 @@ $response = \Tools::request()
                       'Content-Length' => 1024,
                       'X-Foo'          => 'Bar'
                   ])
-                  // auto convert to json, param two is for serialize
+                  // auto convert to json
                   ->body($body)
+                  // serialize the boby
+                  // ->body($body, true)
                   ->post();
 ```
 
