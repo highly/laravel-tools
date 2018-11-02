@@ -165,7 +165,7 @@ $response = \Tools::request()
                   // set up timeout (unit: second)
                   ->timeout(2)
                   ->header(['X-Foo' => 'Bar'])
-                  ->options([
+                  ->properties([
                       // 'allow_redirects' => false,
                       'allow_redirects' => [
                           'max'             => 10,        // allow at most 10 redirects.
@@ -210,11 +210,11 @@ $response = \Tools::request()
 
 ```php
 $body = [
-    'username' => 'shawn',
+    'username' => 'form_post',
     'password' => '123456',
 ];
 $response = \Tools::request()
-                  ->url('http://www.shawn.com/login')
+                  ->url('www.shawn.com/login')
                   ->formBody($body)
                   ->post();
 ```
@@ -222,8 +222,74 @@ $response = \Tools::request()
 #### Method PUT
 
 ```php
-
+$body = [
+    'name' => 'put',
+    'age'  => '10000',
+];
+$response = \Tools::request()
+                  ->url('www.shawn.com/update')
+                  ->jsonHeader()
+                  ->body($body)
+                  ->put();
 ```
+
+#### Method DELETE
+
+```php
+$body = [
+    'name' => 'delete',
+    'age'  => '0',
+];
+$response = \Tools::request()
+                  ->url('www.shawn.com/delete')
+                  ->jsonHeader()
+                  ->body($body)
+                  ->delete();
+```
+
+#### Method PATCH
+
+```php
+$body = [
+    'name' => 'patch',
+    'age'  => '10',
+];
+$response = \Tools::request()
+                  ->url('www.shawn.com/patch')
+                  ->jsonHeader()
+                  ->formBody($body)
+                  ->patch();
+```
+
+#### Method HEAD
+
+```php
+$body = [
+    'name' => 'head',
+    'age'  => '10',
+];
+$response = \Tools::request()
+                  ->url('www.shawn.com/head')
+                  ->jsonHeader()
+                  ->body($body)
+                  ->head();
+```
+
+#### Method OPTIONS
+
+```php
+$body = [
+    'name' => 'options',
+    'age'  => '101',
+];
+$response = \Tools::request()
+              ->url('www.shawn.com/options')
+              ->timeout(2)
+              ->jsonHeader()
+              ->body($body)
+              ->options();
+```
+
 ### Aliyun Upload
 
 

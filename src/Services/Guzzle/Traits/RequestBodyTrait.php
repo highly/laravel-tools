@@ -144,12 +144,12 @@ trait RequestBodyTrait
     }
     
     /**
-     * @param array $options
+     * @param array $properties
      * @return $this
      */
-    public function options(array $options)
+    public function properties(array $properties)
     {
-        $this->options = array_merge($this->options, $options);
+        $this->options = array_merge($this->options, $properties);
         return $this;
     }
     
