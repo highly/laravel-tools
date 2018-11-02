@@ -45,13 +45,14 @@ trait RequestBodyTrait
     }
     
     /**
-     * @param $body
+     * @param      $body
+     * @param bool $serialize
      * @return $this
      */
-    public function body($body)
+    public function body($body, $serialize = false)
     {
-        if (is_array($body)) {
-            $body = \json_encode($body);
+        if (\is_array($body)) {
+            $body = $serialize ? serialize($body) : \json_encode($body);
         }
         $this->options['body'] = $body;
         return $this;
@@ -73,7 +74,12 @@ trait RequestBodyTrait
      */
     public function streamBody($body)
     {
-        $this->options['body'] = \GuzzleHttp\Psr7\stream_for($body);
+        try{
+            $body = \GuzzleHttp\Psr7\stream_for($body);
+        } catch (\Exception $e) {
+            $body = '';
+        }
+        $this->options['body'] = $body;
         return $this;
     }
     
@@ -82,7 +88,7 @@ trait RequestBodyTrait
      */
     public function getBody()
     {
-        return $this->options['body'];
+        return $this->options['body'] ?? '';
     }
     
     /**
@@ -90,7 +96,7 @@ trait RequestBodyTrait
      */
     public function getFormBody()
     {
-        return $this->options['form_params'];
+        return $this->options['form_params'] ?? [];
     }
     
     /**
@@ -126,7 +132,7 @@ trait RequestBodyTrait
      */
     public function getHeader()
     {
-        return $this->options['headers'];
+        return $this->options['headers'] ?? [];
     }
     
     /**
@@ -162,7 +168,17 @@ trait RequestBodyTrait
      */
     public function getTimeout()
     {
-        return $this->options['timeout'];
+        return $this->options['timeout'] ?? 0;
+    }
+    
+    /**
+     * @return $this
+     */
+    public function init()
+    {
+        $this->url = '';
+        $this->options = [];
+        return $this;
     }
     
     /**

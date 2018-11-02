@@ -138,7 +138,7 @@ try{
 
 ### Requests
 
-#### GET
+#### Method GET
 
 ```php
 

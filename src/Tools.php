@@ -49,7 +49,7 @@ class Tools
      */
     public function request()
     {
-        return $this->guzzleHandler;
+        return $this->guzzleHandler->init();
     }
 }
 
