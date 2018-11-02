@@ -6,6 +6,14 @@
 composer require aixue/laravel-tools
 ```
 
+You can also declare the dependency for PHP in the `composer.json` file.
+
+```composer
+"require": {
+  "aixue/laravel-tools": "^1.0"
+}
+```
+
 ## Config
 
 > for laravel version < 5.5
