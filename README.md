@@ -231,6 +231,7 @@ $body = [
 $response = \Tools::request()
                   ->url('www.shawn.com/update')
                   ->jsonHeader()
+                  // ->body(http_build_query($body))
                   ->body($body)
                   ->put();
 ```
