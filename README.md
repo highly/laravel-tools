@@ -106,14 +106,19 @@ return [
 #### basic_publish `single`
 
 ```php
+// the return object of function rabbitMQ is not singleton
+$group_one = \Tools::rabbitMQ('exchange_group_name_1');
+
 // default connection name is 'default'
 try{
-    \Tools::rabbitMQ('exchange_group_name_1')->basicPublish('MQ Message');
+    $group_one->basicPublish('MQ Message 1');
+    $group_one->basicPublish('MQ Message 2');
 } catch (\Exception $e) {}
 
 // define another connection name
 try{
-    \Tools::rabbitMQ('exchange_group_name_1', 'group_name_2')->basicPublish('MQ Message');
+    \Tools::rabbitMQ('exchange_group_name_1', 'group_name_2')
+          ->basicPublish('MQ Message 1');
 } catch (\Exception $e) {}
 ```
 
