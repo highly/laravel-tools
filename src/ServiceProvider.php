@@ -27,7 +27,7 @@ class ServiceProvider extends LaravelServiceProvider
     {
         $this->mergeConfigFile();
     
-        $this->app->singleton(
+        $this->app->bind(
             MqHandler::class,
             function () {
                 return (new MqHandler())->setConfigMap(config('aixue-mq'));
@@ -40,7 +40,7 @@ class ServiceProvider extends LaravelServiceProvider
             }
         );
         
-        $this->app->singleton(
+        $this->app->bind(
             Tools::class,
             function ($app) {
                 return new Tools(
