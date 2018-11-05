@@ -26,13 +26,14 @@ class ServiceProvider extends LaravelServiceProvider
     public function register()
     {
         $this->mergeConfigFile();
-    
+        
         $this->app->bind(
             MqHandler::class,
             function () {
                 return (new MqHandler())->setConfigMap(config('aixue-mq'));
             }
         );
+        
         $this->app->singleton(
             GuzzleHandler::class,
             function () {
@@ -40,11 +41,10 @@ class ServiceProvider extends LaravelServiceProvider
             }
         );
         
-        $this->app->bind(
+        $this->app->singleton(
             Tools::class,
             function ($app) {
                 return new Tools(
-                    $app->make(MqHandler::class),
                     $app->make(GuzzleHandler::class)
                 );
             }

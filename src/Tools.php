@@ -4,6 +4,7 @@ namespace Aixue\Tools;
 
 use Aixue\Tools\Services\RabbitMQ\MqHandler;
 use Aixue\Tools\Services\Guzzle\GuzzleHandler;
+use Illuminate\Container\Container;
 
 /**
  * Class Tools
@@ -22,26 +23,25 @@ class Tools
     
     /**
      * Tools constructor.
-     * @param MqHandler     $mqHandler
-     * @param GuzzleHandler $guzzleHandler'
+     * @param GuzzleHandler $guzzleHandler
      */
     public function __construct(
-        MqHandler $mqHandler,
         GuzzleHandler $guzzleHandler
     ) {
-        $this->mqHandler     = $mqHandler;
         $this->guzzleHandler = $guzzleHandler;
     }
     
     /**
-     * @param string $exchange_group_name
+     * @param        $exchange_group_name
      * @param string $connection
-     * @return MqHandler
-     * @throws Exceptions\RabbitMqException
+     * @return mixed
      */
     public function rabbitMQ($exchange_group_name, $connection = MqHandler::CONNECTION_NAME_DEFAULT)
     {
-        return $this->mqHandler->setConnection($connection)->setExchangeGroup($exchange_group_name);
+        return Container::getInstance()
+                        ->make(MqHandler::class)
+                        ->setConnection($connection)
+                        ->setExchangeGroup($exchange_group_name);
     }
     
     /**
@@ -56,4 +56,3 @@ class Tools
         return $this->guzzleHandler;
     }
 }
-
