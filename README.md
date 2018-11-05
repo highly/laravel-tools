@@ -117,7 +117,7 @@ try{
 
 // define another connection name
 try{
-    \Tools::rabbitMQ('exchange_group_name_1', 'group_name_2')
+    \Tools::rabbitMQ('exchange_group_name_1', 'connection_name_2')
           ->basicPublish('MQ Message 1');
 } catch (\Exception $e) {}
 ```
