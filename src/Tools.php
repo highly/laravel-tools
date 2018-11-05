@@ -12,11 +12,6 @@ use Illuminate\Container\Container;
 class Tools
 {
     /**
-     * @var MqHandler
-     */
-    protected $mqHandler;
-    
-    /**
      * @var GuzzleHandler
      */
     protected $guzzleHandler;
