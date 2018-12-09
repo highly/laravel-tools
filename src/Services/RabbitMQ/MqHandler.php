@@ -83,7 +83,7 @@ class MqHandler extends StructHandler
             
             return true;
         } catch (\Exception $e) {
-            Log::error(
+            Log::warning(
                 'mq_basicPatch_publish_exception',
                 [
                     'code'       => $e->getCode(),
@@ -121,7 +121,7 @@ class MqHandler extends StructHandler
             
             return true;
         } catch (\Exception $e) {
-            Log::error(
+            Log::warning(
                 'mq_basicPatch_publish_exception',
                 [
                     'code'       => $e->getCode(),

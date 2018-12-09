@@ -29,6 +29,11 @@ trait ConfigInfoTrait
     /**
      * @var string
      */
+    protected $mq_vhost = '/';
+    
+    /**
+     * @var string
+     */
     protected $exchange_name;
     
     /**
@@ -116,6 +121,14 @@ trait ConfigInfoTrait
     public function getMqPwd()
     {
         return $this->mq_pwd;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getMqVhost()
+    {
+        return $this->mq_vhost;
     }
     
     /**
@@ -338,6 +351,10 @@ trait ConfigInfoTrait
             throw new RabbitMqException('mq password must be defined.');
         }
         $this->mq_pwd = $connection['password'];
+        
+        if (! empty($connection['vhost'])) {
+            $this->mq_vhost = trim($connection['vhost']);
+        }
         
         return $this;
     }

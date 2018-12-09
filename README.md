@@ -73,6 +73,7 @@ return [
             'port'     => env('RABBITMQ_PORT', '5672'),
             'user'     => env('RABBITMQ_USER'),
             'password' => env('RABBITMQ_PWD'),
+            'vhost'    => env('RABBITMQ_VHOST'),
         ],
 
         '<connection_name_2>' => [
@@ -80,6 +81,7 @@ return [
             'port'     => env('RABBITMQ_PORT_2', '5672'),
             'user'     => env('RABBITMQ_USER_2'),
             'password' => env('RABBITMQ_PWD_2'),
+            'vhost'    => env('RABBITMQ_VHOST_2'),
         ],
     ],
 

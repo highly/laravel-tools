@@ -31,7 +31,7 @@ trait MqStructTrait
         
         try {
             $this->connection = new AMQPStreamConnection(
-                $this->getMqHost(), $this->getMqPort(), $this->getMqUser(), $this->getMqPwd()
+                $this->getMqHost(), $this->getMqPort(), $this->getMqUser(), $this->getMqPwd(), $this->getMqVhost()
             );
             $this->channel = $this->connection->channel();
             
